@@ -95,7 +95,9 @@ module Perpetuity
       time = Time.now.utc
       id = mongo.insert Object, {inserted: time}, []
 
-      object = mongo.retrieve(Object, mongo.query{|o| o.id == id.to_s }).first
+      # Both of them work, with the Moppend you can't preform search with an string, you have to user a BSON::ObjectId.from_string(id_string)
+      object = mongo.retrieve(Object, mongo.query{|o| o.id == id }).first
+      # object = mongo.retrieve(Object, mongo.query{|o| o.id == BSON::ObjectId.from_string(id.to_s) }).first
       retrieved_time = object["inserted"]
       retrieved_time.to_f.should be_within(0.001).of time.to_f
     end
@@ -137,7 +139,7 @@ module Perpetuity
 
       it 'can insert serializable values' do
         serializable_values.each do |value|
-          mongo.insert(Object, {value: value}, []).should be_a Moped::BSON::ObjectId
+          mongo.insert(Object, {value: value}, []).should be_a BSON::ObjectId
           mongo.can_serialize?(value).should be_true
         end
       end
