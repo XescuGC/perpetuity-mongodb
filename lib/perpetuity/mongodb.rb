@@ -87,7 +87,8 @@ module Perpetuity
 
     def retrieve klass, criteria, options = {}
       # MongoDB uses '_id' as its ID field.
-      criteria = to_bson_id(criteria.to_db)
+      # p "Hash? #{criteria.class} - #{criteria.is_a?(Hash)} => #{criteria}"
+      criteria = criteria.is_a?(Hash) ? criteria : to_bson_id(criteria.to_db)
 
       skipped = options.fetch(:skip) { 0 }
 
